@@ -26,6 +26,15 @@ A web-based personal finance tracker built with FastAPI, Jinja2, and HTMX.
 
 3. Optional: copy `.env.example` to `.env` and set `SECRET_KEY` and `DATABASE_URL`. Defaults use a local SQLite file and a dev secret.
 
+### Using Postgres locally (optional, matches Render)
+
+1. Install PostgreSQL and create a database, e.g. `financetracker`.
+2. In `.env` set:
+   ```bash
+   DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/financetracker
+   ```
+3. Run the app once; tables and seed data are created on startup.
+
 ## Run
 
 From the project root (`FinanceTracker/`):
@@ -35,6 +44,15 @@ From the project root (`FinanceTracker/`):
 ```
 
 Open http://127.0.0.1:8000 — you will be redirected to login or dashboard.
+
+## Deploy on Render
+
+1. Push this repo to GitHub (already done).
+2. On [Render](https://render.com): **New → Web Service**, connect the repo.
+3. **Build command:** `pip install -r requirements.txt`
+4. **Start command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+5. **Environment:** Add `SECRET_KEY` (generate a random string). Add a **Postgres** database in Render, then add `DATABASE_URL` with the Internal Database URL from the Postgres service.
+6. Deploy. The app creates tables and seeds categories on first run.
 
 ## Project structure
 

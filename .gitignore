@@ -1,0 +1,19 @@
+# Local env and secrets
+.env
+
+# SQLite (local dev; don't commit DB state)
+*.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+venv/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

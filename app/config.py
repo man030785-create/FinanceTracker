@@ -10,6 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY: str = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
 _default_db_path = BASE_DIR / "financetracker.db"
 DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{_default_db_path}")
+# Render and some hosts give postgres://; SQLAlchemy needs postgresql://
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = "postgresql://" + DATABASE_URL[len("postgres://") :]
 if "sqlite" in DATABASE_URL and "///" in DATABASE_URL:
     path_part = DATABASE_URL.split("///", 1)[-1]
     if path_part.startswith("./") or (path_part != "" and not path_part.startswith("/") and ":" not in path_part[:2]):
