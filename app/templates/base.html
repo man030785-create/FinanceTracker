@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}FinanceTracker{% endblock %}</title>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  {% if user %}
+  <nav class="nav">
+    <a href="{{ request.url_for('dashboard_page') }}">Dashboard</a>
+    <a href="{{ request.url_for('transactions_list') }}">Transactions</a>
+    <a href="{{ request.url_for('insights_page') }}">Insights</a>
+    <a href="{{ request.url_for('categories_list') }}">Categories</a>
+    <a href="{{ request.url_for('logout') }}">Logout</a>
+  </nav>
+  {% endif %}
+  <main class="main">
+    {% if error %}<p class="flash flash-error">{{ error }}</p>{% endif %}
+    {% if message %}<p class="flash flash-success">{{ message }}</p>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

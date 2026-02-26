@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Insights – FinanceTracker{% endblock %}
+{% block content %}
+<h1>Financial insights</h1>
+<form method="get" action="{{ request.url_for('insights_page') }}" class="filters">
+  <label>Period
+    <select name="period" onchange="this.form.submit()">
+      <option value="30" {% if period == '30' %}selected{% endif %}>Last 30 days</option>
+      <option value="6months" {% if period == '6months' %}selected{% endif %}>Last 6 months</option>
+      <option value="custom" {% if period == 'custom' %}selected{% endif %}>Custom range</option>
+    </select>
+  </label>
+  {% if period == 'custom' %}
+  <label>From <input type="date" name="date_from" value="{{ date_from }}"></label>
+  <label>To <input type="date" name="date_to" value="{{ date_to }}"></label>
+  {% endif %}
+  <button type="submit">Update</button>
+</form>
+<h2>Summary</h2>
+<div class="summary-cards">
+  <div class="card">
+    <span class="card-label">Total income</span>
+    <span class="card-value">{{ "%.2f"|format(summary.total_income|float) }}</span>
+  </div>
+  <div class="card">
+    <span class="card-label">Total expenses</span>
+    <span class="card-value">{{ "%.2f"|format(summary.total_expenses|float) }}</span>
+  </div>
+  <div class="card">
+    <span class="card-label">Net savings</span>
+    <span class="card-value">{{ "%.2f"|format(summary.net_savings|float) }}</span>
+  </div>
+  <div class="card">
+    <span class="card-label">Savings rate</span>
+    <span class="card-value">{{ summary.savings_rate }}%</span>
+  </div>
+</div>
+<h2>Category breakdown (expenses)</h2>
+{% if breakdown %}
+<table class="table">
+  <thead>
+    <tr><th>Category</th><th>Total</th><th>% of spending</th></tr>
+  </thead>
+  <tbody>
+  {% for b in breakdown %}
+    <tr>
+      <td>{{ b.category_name }}</td>
+      <td>{{ "%.2f"|format(b.total|float) }}</td>
+      <td>{{ b.percent }}%</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No expense data in this period.</p>
+{% endif %}
+{% endblock %}

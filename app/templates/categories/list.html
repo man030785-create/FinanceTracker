@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Categories – FinanceTracker{% endblock %}
+{% block content %}
+<h1>Categories</h1>
+<form method="post" action="{{ request.url_for('category_create') }}" class="form-inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>New category <input type="text" name="name" placeholder="Category name" required></label>
+  <button type="submit">Add</button>
+</form>
+<table class="table">
+  <thead>
+    <tr><th>Name</th><th>Type</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for c in categories %}
+    <tr>
+      <td>{{ c.name }}</td>
+      <td>{% if c.is_predefined %}Predefined{% else %}Custom{% endif %}</td>
+      <td>
+        {% if not c.is_predefined %}
+        <form method="post" action="{{ request.url_for('category_delete', category_id=c.id) }}" style="display:inline" onsubmit="return confirm('Delete this category?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button type="submit">Delete</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

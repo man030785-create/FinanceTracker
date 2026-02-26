@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Register – FinanceTracker{% endblock %}
+{% block content %}
+<div class="auth-box">
+  <h1>Register</h1>
+  <form method="post" action="{{ request.url_for('register_submit') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Email <input type="email" name="email" required autocomplete="email"></label>
+    <label>Password <input type="password" name="password" required minlength="8" autocomplete="new-password"></label>
+    <button type="submit">Register</button>
+  </form>
+  <p><a href="{{ request.url_for('login_page') }}">Login</a></p>
+</div>
+{% endblock %}

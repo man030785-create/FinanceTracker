@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Not found – FinanceTracker{% endblock %}
+{% block content %}
+<h1>Page not found</h1>
+<p>The page you requested does not exist.</p>
+<p><a href="{{ request.url_for('dashboard_page') }}">Go to dashboard</a></p>
+{% endblock %}

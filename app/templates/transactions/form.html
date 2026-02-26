@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{% if transaction %}Edit{% else %}New{% endif %} Transaction – FinanceTracker{% endblock %}
+{% block content %}
+<h1>{% if transaction %}Edit{% else %}New{% endif %} transaction</h1>
+<form method="post" action="{% if transaction %}{{ request.url_for('transaction_update', transaction_id=transaction.id) }}{% else %}{{ request.url_for('transaction_create') }}{% endif %}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>Amount <input type="number" name="amount" step="0.01" min="0.01" value="{{ transaction.amount if transaction else '' }}" required></label>
+  <label>Type
+    <select name="type">
+      <option value="income" {% if transaction and transaction.type.value == 'income' %}selected{% endif %}>Income</option>
+      <option value="expense" {% if not transaction or transaction.type.value == 'expense' %}selected{% endif %}>Expense</option>
+    </select>
+  </label>
+  <label>Category
+    <select name="category_id" required>
+      <option value="">Select category</option>
+      {% for c in categories %}
+      <option value="{{ c.id }}" {% if transaction and transaction.category_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Date <input type="date" name="transaction_date" value="{{ transaction.transaction_date.isoformat() if transaction else '' }}" required></label>
+  <label>Description <input type="text" name="description" value="{{ transaction.description if transaction else '' }}" placeholder="Optional"></label>
+  <button type="submit">{% if transaction %}Update{% else %}Create{% endif %}</button>
+  <a href="{{ request.url_for('transactions_list') }}">Cancel</a>
+</form>
+{% endblock %}
