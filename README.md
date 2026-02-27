@@ -50,7 +50,8 @@ Open http://127.0.0.1:8000 — you will be redirected to login or dashboard.
 1. Push this repo to GitHub (already done).
 2. On [Render](https://render.com): **New → Web Service**, connect the repo.
 3. **Build command:** `pip install -r requirements.txt`
-4. **Start command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+4. **Start command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`  
+   (Do not use `--reload`; use `$PORT` so Render can reach the app.)
 5. **Environment:** Add `SECRET_KEY` (generate a random string). Add a **Postgres** database in Render, then add `DATABASE_URL` with the Internal Database URL from the Postgres service.
 6. Deploy. The app creates tables and seeds categories on first run.
 
