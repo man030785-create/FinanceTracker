@@ -1,37 +1,37 @@
 """Authentication service: password hashing, JWT, register, login."""
 from datetime import datetime, timedelta
 
+import bcrypt
 from jose import jwt
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from app.config import SECRET_KEY, JWT_ALGORITHM, JWT_EXPIRE_HOURS
 from app.models import User
 
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto",
-    bcrypt__truncate_error=False,  # Silently truncate to 72 bytes (bcrypt limit)
-)
+# Bcrypt accepts at most 72 bytes; we truncate before calling to avoid any library raising.
+MAX_PASSWORD_BYTES = 72
 
 
-def _truncate_72_bytes(s: str) -> str:
-    """Bcrypt accepts max 72 bytes. Return s truncated to 72 UTF-8 bytes."""
-    if not s:
-        return s
-    b = s.encode("utf-8")
-    if len(b) <= 72:
-        return s
-    return b[:72].decode("utf-8", errors="ignore")
+def _password_bytes(password: str) -> bytes:
+    """Return password as bytes, truncated to 72 bytes (bcrypt limit)."""
+    b = password.encode("utf-8") if isinstance(password, str) else password
+    return b[:MAX_PASSWORD_BYTES]
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(_truncate_72_bytes(password))
+    pw_bytes = _password_bytes(password)
+    hashed = bcrypt.hashpw(pw_bytes, bcrypt.gensalt())
+    return hashed.decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(_truncate_72_bytes(plain), hashed)
+    pw_bytes = _password_bytes(plain)
+    try:
+        hashed_bytes = hashed.encode("utf-8") if isinstance(hashed, str) else hashed
+        return bcrypt.checkpw(pw_bytes, hashed_bytes)
+    except Exception:
+        return False
 
 
 def create_access_token(user_id: int) -> str:
