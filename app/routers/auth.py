@@ -43,7 +43,14 @@ async def login_submit(request: Request, db: Session = Depends(get_db)):
     token = create_access_token(user.id)
     next_url = form.get("next", "").strip() or "/dashboard"
     response = RedirectResponse(url=next_url, status_code=303)
-    response.set_cookie(key="financetracker_token", value=token, httponly=True, samesite="lax")
+    token_str = token.decode() if isinstance(token, bytes) else token
+    response.set_cookie(
+        key="financetracker_token",
+        value=token_str,
+        httponly=True,
+        samesite="lax",
+        secure=request.url.scheme == "https",
+    )
     return response
 
 
@@ -64,7 +71,14 @@ async def register_submit(request: Request, db: Session = Depends(get_db)):
         return app.state.render_template(request, "auth/register.html", {"error": error})
     token = create_access_token(user.id)
     response = RedirectResponse(url="/dashboard", status_code=303)
-    response.set_cookie(key="financetracker_token", value=token, httponly=True, samesite="lax")
+    token_str = token.decode() if isinstance(token, bytes) else token
+    response.set_cookie(
+        key="financetracker_token",
+        value=token_str,
+        httponly=True,
+        samesite="lax",
+        secure=request.url.scheme == "https",
+    )
     return response
 
 

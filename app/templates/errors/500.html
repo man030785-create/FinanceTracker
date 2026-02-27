@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Server error – FinanceTracker{% endblock %}
+{% block content %}
+<h1>Something went wrong</h1>
+<p>We couldn't complete your request. Please try again or go back to the home page.</p>
+<p><a href="{{ request.url_for('dashboard_page') }}">Go to dashboard</a> · <a href="{{ request.url_for('login_page') }}">Login</a></p>
+{% endblock %}

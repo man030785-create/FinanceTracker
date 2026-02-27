@@ -64,3 +64,10 @@ async def root(request: Request):
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc):
     return render_template(request, "errors/404.html", {})
+
+
+@app.exception_handler(Exception)
+async def server_error_handler(request: Request, exc: Exception):
+    import logging
+    logging.exception("Unhandled error: %s", exc)
+    return render_template(request, "errors/500.html", {"error": str(exc)})

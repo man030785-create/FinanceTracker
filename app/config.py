@@ -13,6 +13,9 @@ DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{_default_db_path}")
 # Render and some hosts give postgres://; SQLAlchemy needs postgresql://
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = "postgresql://" + DATABASE_URL[len("postgres://") :]
+# Render Postgres requires SSL
+if "postgresql" in DATABASE_URL and "sslmode" not in DATABASE_URL:
+    DATABASE_URL += "?sslmode=require" if "?" not in DATABASE_URL else "&sslmode=require"
 if "sqlite" in DATABASE_URL and "///" in DATABASE_URL:
     path_part = DATABASE_URL.split("///", 1)[-1]
     if path_part.startswith("./") or (path_part != "" and not path_part.startswith("/") and ":" not in path_part[:2]):
