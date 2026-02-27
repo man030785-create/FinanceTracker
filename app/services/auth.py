@@ -9,24 +9,29 @@ from sqlalchemy import select
 from app.config import SECRET_KEY, JWT_ALGORITHM, JWT_EXPIRE_HOURS
 from app.models import User
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto",
+    bcrypt__truncate_error=False,  # Silently truncate to 72 bytes (bcrypt limit)
+)
 
-# Bcrypt accepts at most 72 bytes; truncate to avoid error
-MAX_BCRYPT_BYTES = 72
 
-
-def _truncate_password_for_bcrypt(password: str) -> str:
-    """Return password truncated to 72 bytes (bcrypt limit)."""
-    b = password.encode("utf-8")[:MAX_BCRYPT_BYTES]
-    return b.decode("utf-8", errors="ignore")
+def _truncate_72_bytes(s: str) -> str:
+    """Bcrypt accepts max 72 bytes. Return s truncated to 72 UTF-8 bytes."""
+    if not s:
+        return s
+    b = s.encode("utf-8")
+    if len(b) <= 72:
+        return s
+    return b[:72].decode("utf-8", errors="ignore")
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(_truncate_password_for_bcrypt(password))
+    return pwd_context.hash(_truncate_72_bytes(password))
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(_truncate_password_for_bcrypt(plain), hashed)
+    return pwd_context.verify(_truncate_72_bytes(plain), hashed)
 
 
 def create_access_token(user_id: int) -> str:
