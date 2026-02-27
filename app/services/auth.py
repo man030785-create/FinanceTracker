@@ -11,13 +11,22 @@ from app.models import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# Bcrypt accepts at most 72 bytes; truncate to avoid error
+MAX_BCRYPT_BYTES = 72
+
+
+def _truncate_password_for_bcrypt(password: str) -> str:
+    """Return password truncated to 72 bytes (bcrypt limit)."""
+    b = password.encode("utf-8")[:MAX_BCRYPT_BYTES]
+    return b.decode("utf-8", errors="ignore")
+
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return pwd_context.hash(_truncate_password_for_bcrypt(password))
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return pwd_context.verify(_truncate_password_for_bcrypt(plain), hashed)
 
 
 def create_access_token(user_id: int) -> str:
