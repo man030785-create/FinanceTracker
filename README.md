@@ -55,6 +55,13 @@ Open http://127.0.0.1:8000 — you will be redirected to login or dashboard.
 5. **Environment:** Add `SECRET_KEY` (generate a random string). Add a **Postgres** database in Render, then add `DATABASE_URL` with the Internal Database URL from the Postgres service.
 6. Deploy. The app creates tables and seeds categories on first run.
 
+## Environments
+
+| Environment | URL | Database |
+|-------------|-----|----------|
+| **Test (staging)** | https://financetracker-1-j8m3.onrender.com | financetracker_staging |
+| **Production** | https://financetracker-4gzy.onrender.com | financetracker_rjm8 |
+
 ## Project structure
 
 - `app/main.py` — FastAPI app, Jinja2, static files, router registration
