@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from app.config import BASE_DIR
+from app.config import BASE_DIR, ASSET_VERSION
 from app.database import Base, engine, get_db, SessionLocal
 from app.routers import auth, dashboard, categories, transactions, insights
 from app.services.categories import seed_predefined_categories
@@ -33,7 +33,12 @@ env = Environment(
 def render_template(request: Request, name: str, context: dict) -> HTMLResponse:
     """Render a Jinja2 template with request in context."""
     from app.csrf import generate_csrf_token
-    ctx = {"request": request, "csrf_token": generate_csrf_token(), **context}
+    ctx = {
+        "request": request,
+        "csrf_token": generate_csrf_token(),
+        "asset_version": ASSET_VERSION,
+        **context,
+    }
     template = env.get_template(name)
     return HTMLResponse(template.render(ctx))
 

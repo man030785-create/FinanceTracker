@@ -28,3 +28,6 @@ COOKIE_NAME = "financetracker_token"
 
 # Pagination
 DEFAULT_PAGE_SIZE = 20
+
+# Cache busting for static assets (Render sets RENDER_GIT_COMMIT)
+ASSET_VERSION: str = os.getenv("RENDER_GIT_COMMIT", "dev")
