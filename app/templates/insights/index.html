@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Insights – FinanceTracker{% endblock %}
 {% block content %}
-<h1>Financial insights</h1>
-<form method="get" action="{{ request.url_for('insights_page') }}" class="filters">
+<div class="page-header">
+  <h1>Financial insights</h1>
+</div>
+<form method="get" action="{{ request.url_for('insights_page') }}" class="filters-bar">
   <label>Period
     <select name="period" onchange="this.form.submit()">
       <option value="30" {% if period == '30' %}selected{% endif %}>Last 30 days</option>
@@ -16,42 +18,50 @@
   {% endif %}
   <button type="submit">Update</button>
 </form>
-<h2>Summary</h2>
-<div class="summary-cards">
-  <div class="card">
-    <span class="card-label">Total income</span>
-    <span class="card-value">{{ "%.2f"|format(summary.total_income|float) }}</span>
+<section class="section">
+  <h2 class="section-title">Summary</h2>
+  <div class="summary-cards">
+    <div class="card card--stat card--income">
+      <span class="card-label">Total income</span>
+      <span class="card-value">{{ "%.2f"|format(summary.total_income|float) }}</span>
+    </div>
+    <div class="card card--stat card--expense">
+      <span class="card-label">Total expenses</span>
+      <span class="card-value">{{ "%.2f"|format(summary.total_expenses|float) }}</span>
+    </div>
+    <div class="card card--stat card--savings">
+      <span class="card-label">Net savings</span>
+      <span class="card-value">{{ "%.2f"|format(summary.net_savings|float) }}</span>
+    </div>
+    <div class="card card--stat card--savings">
+      <span class="card-label">Savings rate</span>
+      <span class="card-value">{{ summary.savings_rate }}%</span>
+    </div>
   </div>
-  <div class="card">
-    <span class="card-label">Total expenses</span>
-    <span class="card-value">{{ "%.2f"|format(summary.total_expenses|float) }}</span>
+</section>
+<section class="section">
+  <h2 class="section-title">Category breakdown (expenses)</h2>
+  {% if breakdown %}
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Category</th><th>Total</th><th>% of spending</th></tr>
+      </thead>
+      <tbody>
+      {% for b in breakdown %}
+        <tr>
+          <td>{{ b.category_name }}</td>
+          <td class="amount-expense">{{ "%.2f"|format(b.total|float) }}</td>
+          <td>{{ b.percent }}%</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
   </div>
-  <div class="card">
-    <span class="card-label">Net savings</span>
-    <span class="card-value">{{ "%.2f"|format(summary.net_savings|float) }}</span>
+  {% else %}
+  <div class="empty-state">
+    <p>No expense data in this period. Add transactions to see your spending by category.</p>
   </div>
-  <div class="card">
-    <span class="card-label">Savings rate</span>
-    <span class="card-value">{{ summary.savings_rate }}%</span>
-  </div>
-</div>
-<h2>Category breakdown (expenses)</h2>
-{% if breakdown %}
-<table class="table">
-  <thead>
-    <tr><th>Category</th><th>Total</th><th>% of spending</th></tr>
-  </thead>
-  <tbody>
-  {% for b in breakdown %}
-    <tr>
-      <td>{{ b.category_name }}</td>
-      <td>{{ "%.2f"|format(b.total|float) }}</td>
-      <td>{{ b.percent }}%</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
-{% else %}
-<p>No expense data in this period.</p>
-{% endif %}
+  {% endif %}
+</section>
 {% endblock %}

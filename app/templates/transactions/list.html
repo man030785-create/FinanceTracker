@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% block title %}Transactions – FinanceTracker{% endblock %}
 {% block content %}
-<h1>Transactions</h1>
-<p><a href="{{ request.url_for('transaction_new') }}">Add transaction</a></p>
-<form method="get" action="{{ request.url_for('transactions_list') }}" class="filters">
+<div class="page-header">
+  <h1>Transactions</h1>
+  <div class="actions">
+    <a href="{{ request.url_for('transaction_new') }}" class="button btn-primary">Add transaction</a>
+  </div>
+</div>
+<form method="get" action="{{ request.url_for('transactions_list') }}" class="filters-bar">
   <label>From <input type="date" name="date_from" value="{{ filters.date_from or '' }}"></label>
   <label>To <input type="date" name="date_to" value="{{ filters.date_to or '' }}"></label>
   <label>Category
@@ -24,39 +28,41 @@
   <button type="submit">Filter</button>
 </form>
 <div id="tx-list">
-<table class="table">
-  <thead>
-    <tr><th>Date</th><th>Type</th><th>Category</th><th>Amount</th><th>Description</th><th></th></tr>
-  </thead>
-  <tbody>
-  {% for t in transactions %}
-    <tr>
-      <td>{{ t.transaction_date }}</td>
-      <td>{{ t.type.value }}</td>
-      <td>{{ t.category.name }}</td>
-      <td>{{ "%.2f"|format(t.amount|float) }}</td>
-      <td>{{ t.description or '—' }}</td>
-      <td>
-        <a href="{{ request.url_for('transaction_edit', transaction_id=t.id) }}">Edit</a>
-        <form method="post" action="{{ request.url_for('transaction_delete', transaction_id=t.id) }}" style="display:inline" onsubmit="return confirm('Delete this transaction?');">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-          <button type="submit">Delete</button>
-        </form>
-      </td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
-{% if total_pages > 1 %}
-<nav class="pagination">
-  {% if page > 1 %}
-  <a href="{{ request.url_for('transactions_list') }}?page={{ page - 1 }}&per_page={{ per_page }}{% if filters.date_from %}&date_from={{ filters.date_from }}{% endif %}{% if filters.date_to %}&date_to={{ filters.date_to }}{% endif %}{% if filters.category_id %}&category_id={{ filters.category_id }}{% endif %}{% if filters.type %}&type={{ filters.type }}{% endif %}">Previous</a>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th>Date</th><th>Type</th><th>Category</th><th>Amount</th><th>Description</th><th></th></tr>
+      </thead>
+      <tbody>
+      {% for t in transactions %}
+        <tr>
+          <td>{{ t.transaction_date }}</td>
+          <td>{{ t.type.value }}</td>
+          <td>{{ t.category.name }}</td>
+          <td class="amount-{{ t.type.value }}">{{ "%.2f"|format(t.amount|float) }}</td>
+          <td>{{ t.description or '—' }}</td>
+          <td class="row-actions">
+            <a href="{{ request.url_for('transaction_edit', transaction_id=t.id) }}">Edit</a>
+            <form method="post" action="{{ request.url_for('transaction_delete', transaction_id=t.id) }}" style="display:inline" onsubmit="return confirm('Delete this transaction?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button type="submit" class="btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if total_pages > 1 %}
+  <nav class="pagination">
+    {% if page > 1 %}
+    <a href="{{ request.url_for('transactions_list') }}?page={{ page - 1 }}&per_page={{ per_page }}{% if filters.date_from %}&date_from={{ filters.date_from }}{% endif %}{% if filters.date_to %}&date_to={{ filters.date_to }}{% endif %}{% if filters.category_id %}&category_id={{ filters.category_id }}{% endif %}{% if filters.type %}&type={{ filters.type }}{% endif %}">Previous</a>
+    {% endif %}
+    <span class="current">Page {{ page }} of {{ total_pages }}</span>
+    {% if page < total_pages %}
+    <a href="{{ request.url_for('transactions_list') }}?page={{ page + 1 }}&per_page={{ per_page }}{% if filters.date_from %}&date_from={{ filters.date_from }}{% endif %}{% if filters.date_to %}&date_to={{ filters.date_to }}{% endif %}{% if filters.category_id %}&category_id={{ filters.category_id }}{% endif %}{% if filters.type %}&type={{ filters.type }}{% endif %}">Next</a>
+    {% endif %}
+  </nav>
   {% endif %}
-  <span>Page {{ page }} of {{ total_pages }}</span>
-  {% if page < total_pages %}
-  <a href="{{ request.url_for('transactions_list') }}?page={{ page + 1 }}&per_page={{ per_page }}{% if filters.date_from %}&date_from={{ filters.date_from }}{% endif %}{% if filters.date_to %}&date_to={{ filters.date_to }}{% endif %}{% if filters.category_id %}&category_id={{ filters.category_id }}{% endif %}{% if filters.type %}&type={{ filters.type }}{% endif %}">Next</a>
-  {% endif %}
-</nav>
-{% endif %}
 </div>
 {% endblock %}

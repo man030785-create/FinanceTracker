@@ -7,13 +7,14 @@
   <script src="https://unpkg.com/htmx.org@1.9.10"></script>
   <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
   {% if user %}
   <nav class="nav">
-    <a href="{{ request.url_for('dashboard_page') }}">Dashboard</a>
-    <a href="{{ request.url_for('transactions_list') }}">Transactions</a>
-    <a href="{{ request.url_for('insights_page') }}">Insights</a>
-    <a href="{{ request.url_for('categories_list') }}">Categories</a>
+    <a href="{{ request.url_for('dashboard_page') }}" class="nav-brand">FinanceTracker</a>
+    <a href="{{ request.url_for('dashboard_page') }}" class="{% if request.url.path == '/dashboard' or request.url.path == '/' %}active{% endif %}">Dashboard</a>
+    <a href="{{ request.url_for('transactions_list') }}" class="{% if request.url.path.startswith('/transactions') %}active{% endif %}">Transactions</a>
+    <a href="{{ request.url_for('insights_page') }}" class="{% if request.url.path.startswith('/insights') %}active{% endif %}">Insights</a>
+    <a href="{{ request.url_for('categories_list') }}" class="{% if request.url.path.startswith('/categories') %}active{% endif %}">Categories</a>
     <a href="{{ request.url_for('logout') }}">Logout</a>
   </nav>
   {% endif %}

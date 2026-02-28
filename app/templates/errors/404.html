@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Not found – FinanceTracker{% endblock %}
+{% block body_class %}error-page{% endblock %}
 {% block content %}
-<h1>Page not found</h1>
-<p>The page you requested does not exist.</p>
-<p><a href="{{ request.url_for('dashboard_page') }}">Go to dashboard</a></p>
+<div class="error-box">
+  <h1>Page not found</h1>
+  <p>The page you requested does not exist.</p>
+  <a href="{{ request.url_for('dashboard_page') }}" class="button btn-primary">Go to dashboard</a>
+</div>
 {% endblock %}

@@ -1,31 +1,35 @@
 {% extends "base.html" %}
 {% block title %}Categories – FinanceTracker{% endblock %}
 {% block content %}
-<h1>Categories</h1>
+<div class="page-header">
+  <h1>Categories</h1>
+</div>
 <form method="post" action="{{ request.url_for('category_create') }}" class="form-inline">
   <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
   <label>New category <input type="text" name="name" placeholder="Category name" required></label>
-  <button type="submit">Add</button>
+  <button type="submit">Add category</button>
 </form>
-<table class="table">
-  <thead>
-    <tr><th>Name</th><th>Type</th><th></th></tr>
-  </thead>
-  <tbody>
-  {% for c in categories %}
-    <tr>
-      <td>{{ c.name }}</td>
-      <td>{% if c.is_predefined %}Predefined{% else %}Custom{% endif %}</td>
-      <td>
-        {% if not c.is_predefined %}
-        <form method="post" action="{{ request.url_for('category_delete', category_id=c.id) }}" style="display:inline" onsubmit="return confirm('Delete this category?');">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-          <button type="submit">Delete</button>
-        </form>
-        {% endif %}
-      </td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Name</th><th>Type</th><th></th></tr>
+    </thead>
+    <tbody>
+    {% for c in categories %}
+      <tr>
+        <td>{{ c.name }}</td>
+        <td><span class="text-muted">{% if c.is_predefined %}Predefined{% else %}Custom{% endif %}</span></td>
+        <td class="row-actions">
+          {% if not c.is_predefined %}
+          <form method="post" action="{{ request.url_for('category_delete', category_id=c.id) }}" style="display:inline" onsubmit="return confirm('Delete this category?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button type="submit" class="btn-danger">Delete</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

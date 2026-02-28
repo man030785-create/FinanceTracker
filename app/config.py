@@ -23,7 +23,7 @@ if "sqlite" in DATABASE_URL and "///" in DATABASE_URL:
 
 # JWT
 JWT_ALGORITHM = "HS256"
-JWT_EXPIRE_HOURS = 24
+JWT_EXPIRE_HOURS = 1
 COOKIE_NAME = "financetracker_token"
 
 # Pagination
