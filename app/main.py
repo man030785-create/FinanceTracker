@@ -34,11 +34,13 @@ def render_template(request: Request, name: str, context: dict) -> HTMLResponse:
     """Render a Jinja2 template with request in context."""
     from datetime import date
     from app.csrf import generate_csrf_token
+    from app.config import SHOW_ALERTS_BANNER_DEMO
     ctx = {
         "request": request,
         "csrf_token": generate_csrf_token(),
         "asset_version": ASSET_VERSION,
         "alerts_dismiss_key": date.today().strftime("%Y-%m"),
+        "show_alerts_banner_demo": SHOW_ALERTS_BANNER_DEMO,
         **context,
     }
     template = env.get_template(name)
