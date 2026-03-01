@@ -41,8 +41,17 @@ def render_template(request: Request, name: str, context: dict) -> HTMLResponse:
         "asset_version": ASSET_VERSION,
         "alerts_dismiss_key": date.today().strftime("%Y-%m"),
         "show_alerts_banner_demo": SHOW_ALERTS_BANNER_DEMO,
+        "force_show_alerts_banner": request.query_params.get("show_alerts") == "1",
         **context,
     }
+    # Ensure alerts is always set when user is present (so banner works even if a route forgot to pass it)
+    if ctx.get("user") is not None and ctx.get("alerts") is None:
+        from app.dependencies import get_alerts_for_user
+        db = SessionLocal()
+        try:
+            ctx["alerts"] = get_alerts_for_user(db, ctx["user"].id)
+        finally:
+            db.close()
     template = env.get_template(name)
     return HTMLResponse(template.render(ctx))
 
