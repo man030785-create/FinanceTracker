@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request, Depends, Query
 from fastapi.responses import RedirectResponse
 
 from app.database import get_db
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, get_alerts_for_user
 
 router = APIRouter()
 
@@ -27,12 +27,14 @@ async def transactions_list(
         date_from=date_from, date_to=date_to, category_id=category_id, type_filter=type_filter,
     )
     categories = get_categories_for_user(db, user.id)
+    alerts = get_alerts_for_user(db, user.id)
     from app.main import app
     return app.state.render_template(
         request,
         "transactions/list.html",
         {
             "user": user,
+            "alerts": alerts,
             "transactions": result["items"],
             "total": result["total"],
             "page": page,
@@ -53,9 +55,10 @@ async def transactions_list(
 async def transaction_new(request: Request, db=Depends(get_db), user=Depends(get_current_user)):
     from app.services.categories import get_categories_for_user
     categories = get_categories_for_user(db, user.id)
+    alerts = get_alerts_for_user(db, user.id)
     from app.main import app
     return app.state.render_template(
-        request, "transactions/form.html", {"user": user, "categories": categories, "transaction": None}
+        request, "transactions/form.html", {"user": user, "alerts": alerts, "categories": categories, "transaction": None}
     )
 
 
@@ -78,11 +81,12 @@ async def transaction_create(request: Request, db=Depends(get_db), user=Depends(
     if error:
         from app.services.categories import get_categories_for_user
         categories = get_categories_for_user(db, user.id)
+        alerts = get_alerts_for_user(db, user.id)
         from app.main import app
         return app.state.render_template(
             request,
             "transactions/form.html",
-            {"user": user, "categories": categories, "transaction": None, "error": error},
+            {"user": user, "alerts": alerts, "categories": categories, "transaction": None, "error": error},
         )
     return RedirectResponse(url="/transactions", status_code=303)
 
@@ -98,11 +102,12 @@ async def transaction_edit(
         return RedirectResponse(url="/transactions", status_code=303)
     from app.services.categories import get_categories_for_user
     categories = get_categories_for_user(db, user.id)
+    alerts = get_alerts_for_user(db, user.id)
     from app.main import app
     return app.state.render_template(
         request,
         "transactions/form.html",
-        {"user": user, "categories": categories, "transaction": trans},
+        {"user": user, "alerts": alerts, "categories": categories, "transaction": trans},
     )
 
 
@@ -130,11 +135,12 @@ async def transaction_update(
         from app.services.categories import get_categories_for_user
         trans = get_transaction(db, user.id, transaction_id)
         categories = get_categories_for_user(db, user.id)
+        alerts = get_alerts_for_user(db, user.id)
         from app.main import app
         return app.state.render_template(
             request,
             "transactions/form.html",
-            {"user": user, "categories": categories, "transaction": trans, "error": error},
+            {"user": user, "alerts": alerts, "categories": categories, "transaction": trans, "error": error},
         )
     return RedirectResponse(url="/transactions", status_code=303)
 

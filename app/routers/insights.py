@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request, Depends, Query
 from datetime import date, timedelta
 
 from app.database import get_db
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, get_alerts_for_user
 
 router = APIRouter()
 
@@ -35,12 +35,14 @@ async def insights_page(
     from app.services.insights import get_monthly_summary_range, get_category_breakdown
     summary = get_monthly_summary_range(db, user.id, date_from_val, date_to_val)
     breakdown = get_category_breakdown(db, user.id, date_from_val, date_to_val)
+    alerts = get_alerts_for_user(db, user.id)
     from app.main import app
     return app.state.render_template(
         request,
         "insights/index.html",
         {
             "user": user,
+            "alerts": alerts,
             "summary": summary,
             "breakdown": breakdown,
             "period": period,
