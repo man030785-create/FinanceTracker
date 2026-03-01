@@ -7,6 +7,23 @@
     <a href="{{ request.url_for('transaction_new') }}" class="button btn-primary">Add transaction</a>
   </div>
 </div>
+{% if alerts %}
+<section class="section section--alerts">
+  <h2 class="section-title">Alerts</h2>
+  <div class="alerts-list">
+    {% for a in alerts %}
+    <div class="alert alert--{{ a.severity }}" role="alert">
+      <strong>{{ a.title }}</strong>
+      <p class="alert-message">{{ a.message }}</p>
+      {% if a.kind == 'large_transaction' and a.transaction_id %}
+      <p class="alert-meta"><a href="{{ request.url_for('transactions_list') }}">View transactions</a></p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  <p><a href="{{ request.url_for('alerts_page') }}">View all alerts</a></p>
+</section>
+{% endif %}
 <div class="summary-cards">
   <div class="card card--stat card--income">
     <span class="card-label">Income (this month)</span>

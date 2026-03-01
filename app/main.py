@@ -8,7 +8,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from app.config import BASE_DIR, ASSET_VERSION
 from app.database import Base, engine, get_db, SessionLocal
-from app.routers import auth, dashboard, categories, transactions, insights
+from app.routers import auth, dashboard, categories, transactions, insights, alerts
 from app.services.categories import seed_predefined_categories
 
 # Create tables
@@ -32,11 +32,13 @@ env = Environment(
 
 def render_template(request: Request, name: str, context: dict) -> HTMLResponse:
     """Render a Jinja2 template with request in context."""
+    from datetime import date
     from app.csrf import generate_csrf_token
     ctx = {
         "request": request,
         "csrf_token": generate_csrf_token(),
         "asset_version": ASSET_VERSION,
+        "alerts_dismiss_key": date.today().strftime("%Y-%m"),
         **context,
     }
     template = env.get_template(name)
@@ -57,6 +59,7 @@ app.include_router(dashboard.router, prefix="", tags=["dashboard"])
 app.include_router(categories.router, prefix="/categories", tags=["categories"])
 app.include_router(transactions.router, prefix="/transactions", tags=["transactions"])
 app.include_router(insights.router, prefix="/insights", tags=["insights"])
+app.include_router(alerts.router, prefix="/alerts", tags=["alerts"])
 
 
 @app.get("/")

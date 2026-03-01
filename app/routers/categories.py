@@ -3,7 +3,7 @@ from fastapi import APIRouter, Request, Depends
 from fastapi.responses import RedirectResponse
 
 from app.database import get_db
-from app.dependencies import get_current_user
+from app.dependencies import get_current_user, get_alerts_for_user
 
 router = APIRouter()
 
@@ -12,9 +12,10 @@ router = APIRouter()
 async def categories_list(request: Request, db=Depends(get_db), user=Depends(get_current_user)):
     from app.services.categories import get_categories_for_user
     cats = get_categories_for_user(db, user.id)
+    alerts = get_alerts_for_user(db, user.id)
     from app.main import app
     return app.state.render_template(
-        request, "categories/list.html", {"user": user, "categories": cats}
+        request, "categories/list.html", {"user": user, "alerts": alerts, "categories": cats}
     )
 
 
@@ -30,9 +31,10 @@ async def category_create(request: Request, db=Depends(get_db), user=Depends(get
     if error:
         from app.services.categories import get_categories_for_user
         cats = get_categories_for_user(db, user.id)
+        alerts = get_alerts_for_user(db, user.id)
         from app.main import app
         return app.state.render_template(
-            request, "categories/list.html", {"user": user, "categories": cats, "error": error}
+            request, "categories/list.html", {"user": user, "alerts": alerts, "categories": cats, "error": error}
         )
     return RedirectResponse(url="/categories", status_code=303)
 

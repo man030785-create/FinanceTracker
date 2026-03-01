@@ -16,6 +16,7 @@
   --error: #ef4444;
   --error-bg: #fee2e2;
   --warning: #f59e0b;
+  --warning-bg: #fef3c7;
   --income: #059669;
   --income-bg: #d1fae5;
   --expense: #dc2626;
@@ -62,6 +63,30 @@ body {
 .nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
 .nav .nav-brand { font-weight: 700; color: var(--text); margin-right: auto; font-size: 1.1rem; }
 .nav .nav-brand:hover { color: var(--primary); border-bottom-color: transparent; }
+.nav-link-alerts { position: relative; display: inline-flex; align-items: center; gap: 0.35rem; }
+.nav-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.25rem; height: 1.25rem; padding: 0 0.35rem;
+  font-size: 0.75rem; font-weight: 600; color: #fff;
+  background: var(--warning); border-radius: 999px;
+}
+
+/* Alert banner (site-wide when there are alerts) */
+.alert-banner {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap;
+  padding: 0.5rem 1rem; background: var(--warning-bg); color: #92400e;
+  border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+  font-size: 0.9375rem; font-weight: 500;
+}
+.alert-banner-link { font-weight: 600; color: #b45309; text-decoration: none; }
+.alert-banner-link:hover { text-decoration: underline; }
+.alert-banner-dismiss { margin: 0; }
+.alert-banner-dismiss-btn {
+  font-size: 0.875rem; padding: 0.25rem 0.5rem;
+  background: transparent; color: #92400e; border: 1px solid currentColor;
+  border-radius: var(--radius-sm); cursor: pointer;
+}
+.alert-banner-dismiss-btn:hover { background: rgba(0,0,0,0.06); }
 
 /* Flash */
 .flash {
@@ -72,6 +97,20 @@ body {
 }
 .flash-error { background: var(--error-bg); color: var(--error); }
 .flash-success { background: var(--success-bg); color: var(--success); }
+
+/* Alerts (budget / large transaction) */
+.alerts-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.alert {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius);
+  border-left: 4px solid;
+}
+.alert-message { margin: 0.35rem 0 0; font-size: 0.9375rem; }
+.alert-meta { margin: 0.5rem 0 0; font-size: 0.875rem; color: var(--text-muted); }
+.alert-meta a { font-weight: 500; }
+.alert--warning { background: var(--warning-bg); color: #92400e; border-left-color: var(--warning); }
+.alert--info { background: var(--primary-light); color: #0369a1; border-left-color: var(--primary); }
+.section--alerts { margin-bottom: 1.5rem; }
 
 /* Page header */
 .page-header {

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Alerts – FinanceTracker{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>Alerts</h1>
+  <p class="text-muted">Budget and unusual transaction alerts for your finances.</p>
+</div>
+<form method="get" action="{{ request.url_for('alerts_page') }}" class="filters-bar">
+  <label>Month
+    <input type="number" name="month" min="1" max="12" value="{{ month }}" placeholder="{{ current_month }}">
+  </label>
+  <label>Year
+    <input type="number" name="year" min="2000" max="2100" value="{{ year }}" placeholder="{{ current_year }}">
+  </label>
+  <button type="submit">Update</button>
+</form>
+<section class="section">
+  <h2 class="section-title">Alerts for {{ month }}/{{ year }}</h2>
+  {% if page_alerts %}
+  <div class="alerts-list">
+    {% for a in page_alerts %}
+    <div class="alert alert--{{ a.severity }}" role="alert">
+      <strong>{{ a.title }}</strong>
+      <p class="alert-message">{{ a.message }}</p>
+      {% if a.kind == 'large_transaction' and a.transaction_id %}
+      <p class="alert-meta">
+        {% if a.category_name %}{{ a.category_name }}{% if a.description %} · {{ a.description }}{% endif %}{% else %}{{ a.description or '—' }}{% endif %}
+        <a href="{{ request.url_for('transactions_list') }}">View transactions</a>
+      </p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>No alerts for this period. You're within budget and there are no unusually large transactions.</p>
+    <p class="text-muted">Alerts trigger when: (1) expenses exceed a set % of income, or (2) a single expense is above a % of monthly income. Configure via <code>BUDGET_ALERT_PERCENT</code> and <code>LARGE_TRANSACTION_PERCENT</code> in your environment.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

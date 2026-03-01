@@ -1,4 +1,5 @@
 """FastAPI dependencies (e.g. auth)."""
+from datetime import date
 from fastapi import Request, Depends
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
@@ -19,6 +20,13 @@ async def get_current_user(
             next_url += "?" + str(request.query_params)
         return RedirectResponse(url=f"/login?next={next_url}", status_code=303)
     return user
+
+
+def get_alerts_for_user(db: Session, user_id: int) -> list:
+    """Return current month alerts for template context (e.g. nav banner)."""
+    from app.services.alerts import get_alerts
+    today = date.today()
+    return get_alerts(db, user_id, year=today.year, month=today.month)
 
 
 async def get_current_user_optional(

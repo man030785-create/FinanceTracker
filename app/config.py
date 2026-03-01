@@ -29,5 +29,11 @@ COOKIE_NAME = "financetracker_token"
 # Pagination
 DEFAULT_PAGE_SIZE = 20
 
+# Alerts: budget vs earnings and large transactions
+# Alert when expenses >= this percent of income (e.g. 90 = 90%)
+BUDGET_ALERT_PERCENT: float = float(os.getenv("BUDGET_ALERT_PERCENT", "90"))
+# Alert when a single expense is >= this percent of monthly income (e.g. 25 = 25%)
+LARGE_TRANSACTION_PERCENT: float = float(os.getenv("LARGE_TRANSACTION_PERCENT", "25"))
+
 # Cache busting for static assets (Render sets RENDER_GIT_COMMIT)
 ASSET_VERSION: str = os.getenv("RENDER_GIT_COMMIT", "dev")

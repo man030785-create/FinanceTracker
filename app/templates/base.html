@@ -14,9 +14,21 @@
     <a href="{{ request.url_for('dashboard_page') }}" class="{% if request.url.path == '/dashboard' or request.url.path == '/' %}active{% endif %}">Dashboard</a>
     <a href="{{ request.url_for('transactions_list') }}" class="{% if request.url.path.startswith('/transactions') %}active{% endif %}">Transactions</a>
     <a href="{{ request.url_for('insights_page') }}" class="{% if request.url.path.startswith('/insights') %}active{% endif %}">Insights</a>
+    <a href="{{ request.url_for('alerts_page') }}" class="nav-link-alerts {% if request.url.path.startswith('/alerts') %}active{% endif %}">Alerts{% if alerts and alerts|length > 0 and (not request.cookies.get('alerts_dismissed') or request.cookies.get('alerts_dismissed') != alerts_dismiss_key) %}<span class="nav-badge">{{ alerts|length }}</span>{% endif %}</a>
     <a href="{{ request.url_for('categories_list') }}" class="{% if request.url.path.startswith('/categories') %}active{% endif %}">Categories</a>
     <a href="{{ request.url_for('logout') }}">Logout</a>
   </nav>
+  {% if alerts and alerts|length > 0 and (not request.cookies.get('alerts_dismissed') or request.cookies.get('alerts_dismissed') != alerts_dismiss_key) %}
+  <div class="alert-banner" role="alert">
+    <span class="alert-banner-text">You have {{ alerts|length }} alert{{ 's' if alerts|length != 1 else '' }} this month.</span>
+    <a href="{{ request.url_for('alerts_page') }}" class="alert-banner-link">View alerts</a>
+    <form method="post" action="/alerts/dismiss" class="alert-banner-dismiss" style="display:inline;">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="next" value="{{ request.url.path }}">
+      <button type="submit" class="btn-ghost alert-banner-dismiss-btn">Dismiss</button>
+    </form>
+  </div>
+  {% endif %}
   {% endif %}
   <main class="main">
     {% if error %}<p class="flash flash-error">{{ error }}</p>{% endif %}
