@@ -14,13 +14,17 @@
     <a href="{{ request.url_for('dashboard_page') }}" class="{% if request.url.path == '/dashboard' or request.url.path == '/' %}active{% endif %}">Dashboard</a>
     <a href="{{ request.url_for('transactions_list') }}" class="{% if request.url.path.startswith('/transactions') %}active{% endif %}">Transactions</a>
     <a href="{{ request.url_for('insights_page') }}" class="{% if request.url.path.startswith('/insights') %}active{% endif %}">Insights</a>
-    <a href="{{ request.url_for('alerts_page') }}" class="nav-link-alerts {% if request.url.path.startswith('/alerts') %}active{% endif %}">Alerts{% if alerts and alerts|length > 0 and (not request.cookies.get('alerts_dismissed') or request.cookies.get('alerts_dismissed') != alerts_dismiss_key) %}<span class="nav-badge">{{ alerts|length }}</span>{% endif %}</a>
+    <a href="{{ request.url_for('alerts_page') }}" class="nav-link-alerts {% if request.url.path.startswith('/alerts') %}active{% endif %}">Alerts{% if (alerts or [])|length > 0 and (not request.cookies.get('alerts_dismissed') or request.cookies.get('alerts_dismissed') != (alerts_dismiss_key or '')) %}<span class="nav-badge">{{ (alerts or [])|length }}</span>{% elif (show_alerts_banner_demo|default(false)) and (not request.cookies.get('alerts_dismissed') or request.cookies.get('alerts_dismissed') != (alerts_dismiss_key or '')) %}<span class="nav-badge">1</span>{% endif %}</a>
     <a href="{{ request.url_for('categories_list') }}" class="{% if request.url.path.startswith('/categories') %}active{% endif %}">Categories</a>
     <a href="{{ request.url_for('logout') }}">Logout</a>
   </nav>
-  {% if alerts and alerts|length > 0 and (not request.cookies.get('alerts_dismissed') or request.cookies.get('alerts_dismissed') != alerts_dismiss_key) %}
+  {% set _alerts = alerts or [] %}
+  {% set _dismiss_key = alerts_dismiss_key or '' %}
+  {% set _demo = show_alerts_banner_demo|default(false) %}
+  {% set _show_banner = (_alerts|length > 0 or _demo) and (not request.cookies.get('alerts_dismissed') or request.cookies.get('alerts_dismissed') != _dismiss_key) %}
+  {% if _show_banner %}
   <div class="alert-banner" role="alert">
-    <span class="alert-banner-text">You have {{ alerts|length }} alert{{ 's' if alerts|length != 1 else '' }} this month.</span>
+    <span class="alert-banner-text">You have {{ _alerts|length if _alerts|length > 0 else 1 }} alert{{ 's' if (_alerts|length if _alerts|length > 0 else 1) != 1 else '' }} this month.{% if _demo and _alerts|length == 0 %} (demo){% endif %}</span>
     <a href="{{ request.url_for('alerts_page') }}" class="alert-banner-link">View alerts</a>
     <form method="post" action="/alerts/dismiss" class="alert-banner-dismiss" style="display:inline;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
