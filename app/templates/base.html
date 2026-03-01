@@ -22,7 +22,7 @@
   <div class="alert-banner" role="alert">
     <span class="alert-banner-text">You have {{ alerts|length }} alert{{ 's' if alerts|length != 1 else '' }} this month.</span>
     <a href="{{ request.url_for('alerts_page') }}" class="alert-banner-link">View alerts</a>
-    <form method="post" action="{{ request.url_for('alerts_dismiss') }}" class="alert-banner-dismiss" style="display:inline;">
+    <form method="post" action="/alerts/dismiss" class="alert-banner-dismiss" style="display:inline;">
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <input type="hidden" name="next" value="{{ request.url.path }}">
       <button type="submit" class="btn-ghost alert-banner-dismiss-btn">Dismiss</button>
